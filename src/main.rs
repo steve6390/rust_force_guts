@@ -1,4 +1,5 @@
 use std::fmt;
+extern crate rand;
 
 enum Suit {
     Heart,
@@ -64,16 +65,43 @@ impl Card {
         Self { rank : r, suit : s }
     }
 
-    fn toString(&self) -> String {
+    fn to_string(&self) -> String {
         format!("{} of {}", self.rank, self.suit )
     }
 }
+
+impl fmt::Display for Card {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.rank)
+    }
+}
+
+struct Hand {
+    cards : Vec<Card>,
+}
+
+impl Hand {
+    fn new( c0 : Card, c1 : Card, c2 : Card) -> Self {
+        let mut cv = Vec::with_capacity(3);
+        cv.push(c0);
+        cv.push(c1);
+        cv.push(c2);
+        Hand { cards : cv }
+    }
+}
+
+struct Player {
+    hand : Hand,
+    bald : bool,
+}
+
+use rand::{thread_rng, Rng};
 
 fn main() {
     use Suit::*;
     use Rank::*;
 
-    let deck = [
+    let mut deck = [
         Card { rank : Two  , suit : Heart },
         Card { rank : Three, suit : Heart },
         Card { rank : Four , suit : Heart },
@@ -130,6 +158,14 @@ fn main() {
 
     println!("Force Guts 0.1");
     for card in deck.iter() {
-        println!("Card is {}", card.toString());
+        println!("Card is {}", card.to_string());
+    }
+
+    let mut rng = thread_rng();
+    println!("After shuffling:");
+    rng.shuffle(&mut deck);
+
+    for card in deck.iter() {
+        println!("Card is {}", card);
     }
 }
