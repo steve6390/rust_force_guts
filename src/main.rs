@@ -82,17 +82,13 @@ struct Hand {
 
 impl Hand {
     fn new( c0 : Card, c1 : Card, c2 : Card) -> Self {
-        let mut cv = Vec::with_capacity(3);
-        cv.push(c0);
-        cv.push(c1);
-        cv.push(c2);
+        let cv = vec![c0, c1, c2];
         Hand { cards : cv }
     }
 }
 
 struct Player {
     hand : Hand,
-    bald : bool,
 }
 
 use rand::{thread_rng, Rng};
@@ -168,4 +164,5 @@ fn main() {
     for card in deck.iter() {
         println!("Card is {}", card);
     }
+
 }
