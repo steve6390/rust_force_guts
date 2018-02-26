@@ -1,6 +1,7 @@
 use std::fmt;
 extern crate rand;
 
+#[derive(Clone, Copy, Debug)]
 enum Suit {
     Heart,
     Club,
@@ -19,6 +20,7 @@ impl fmt::Display for Suit {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
 enum Rank {
     Two,
     Three,
@@ -55,6 +57,7 @@ impl fmt::Display for Rank {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
 struct Card {
     suit : Suit,
     rank : Rank
@@ -87,10 +90,6 @@ impl Hand {
     }
 }
 
-struct Player {
-    hand : Hand,
-}
-
 use rand::{thread_rng, Rng};
 
 fn main() {
@@ -104,7 +103,7 @@ fn main() {
         Card { rank : Five , suit : Heart },
         Card { rank : Six  , suit : Heart },
         Card { rank : Seven, suit : Heart },
-        Card { rank : Eight, suit : Heart }, 
+        Card { rank : Eight, suit : Heart },
         Card { rank : Nine , suit : Heart },
         Card { rank : Ten  , suit : Heart },
         Card { rank : Jack , suit : Heart },
@@ -164,5 +163,7 @@ fn main() {
     for card in deck.iter() {
         println!("Card is {}", card);
     }
+
+    let hands = vec![Hand::new(deck[0],deck[1],deck[2])];
 
 }
