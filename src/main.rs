@@ -1,94 +1,39 @@
 use std::fmt;
 use std::fmt::Write;
+use std::cmp::Ordering;
 use std::cmp;
 extern crate rand;
+mod cardlib;
+use cardlib::*;
 
-#[derive(Clone, Copy, Debug)]
-enum Suit {
-    Heart,
-    Club,
-    Diamond,
-    Spade
-}
-
-impl fmt::Display for Suit {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            Suit::Heart => write!(f, "♥"),
-            Suit::Diamond => write!(f, "♦"),
-            Suit::Spade => write!(f, "♠"),
-            Suit::Club => write!(f, "♣"),
-       }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
-enum Rank {
-    Two,
-    Three,
-    Four,
-    Five,
-    Six,
-    Seven,
-    Eight,
-    Nine,
-    Ten,
-    Jack,
-    Queen,
-    King,
-    Ace
-}
-
-impl fmt::Display for Rank {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            Rank::Two   => write!(f, "2"),
-            Rank::Three => write!(f, "3"),
-            Rank::Four  => write!(f, "4"),
-            Rank::Five  => write!(f, "5"),
-            Rank::Six   => write!(f, "6"),
-            Rank::Seven => write!(f, "7"),
-            Rank::Eight => write!(f, "8"),
-            Rank::Nine  => write!(f, "9"),
-            Rank::Ten   => write!(f, "T"),
-            Rank::Jack  => write!(f, "J"),
-            Rank::Queen => write!(f, "Q"),
-            Rank::King  => write!(f, "K"),
-            Rank::Ace   => write!(f, "A"),
-       }
-    }
-}
-
-#[derive(Clone, Copy, Debug)]
-struct Card {
-    suit : Suit,
-    rank : Rank
-}
-
-impl Card {
-    fn to_string(&self) -> String {
-        format!("{} of {}", self.rank, self.suit )
-    }
-}
-
-impl fmt::Display for Card {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.rank)
-    }
-}
 
 struct Hand {
     cards : Vec<Card>,
+    upcard : Card,
 }
 
 impl Hand {
     fn new( c0 : Card, c1 : Card, c2 : Card) -> Self {
-        let cv = vec![c0, c1, c2];
-        Hand { cards : cv }
+        let mut cv = vec![c0, c1, c2];
+        cv.sort();
+        Hand { cards : cv, upcard : c0 }
     }
 
     fn get_upcard_rank(&self) -> Rank {
-        self.cards[0].rank
+        self.upcard.rank
+    }
+
+    fn is_3ofkind(&self) -> bool {
+        (self.cards[0].rank == self.cards[1].rank) &&
+        (self.cards[0].rank == self.cards[2].rank)
+    }
+}
+
+impl PartialEq for Hand {
+    fn eq(&self, other: &Hand) -> bool {
+        (self.cards[0].rank == other.cards[0].rank) &&
+        (self.cards[1].rank == other.cards[1].rank) &&
+        (self.cards[2].rank == other.cards[2].rank)
     }
 }
 
@@ -192,9 +137,25 @@ fn main() {
 
     let mut force_card  = Two;
     for (i, h) in hands.iter().enumerate() {
-        println!("Player {} has {}", i+1, h.get_upcard_rank());
+        println!("Player {} shows {}", i, h.get_upcard_rank());
         force_card = cmp::max(force_card, h.get_upcard_rank());
     }
 
     println!("Force card is {}", force_card );
+
+    let mut forced_players = Vec::new();
+
+    for (i, h) in hands.iter().enumerate() {
+        if h.get_upcard_rank() == force_card {
+            forced_players.push(i);
+        }
+    }
+
+    println!("Forced players are: ");
+    for i in forced_players {
+        println!("{}", i);
+    }
+
+
+
 }
