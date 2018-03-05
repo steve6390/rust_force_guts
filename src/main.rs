@@ -1,4 +1,6 @@
 use std::fmt;
+use std::fmt::Write;
+use std::cmp;
 extern crate rand;
 
 #[derive(Clone, Copy, Debug)]
@@ -20,7 +22,7 @@ impl fmt::Display for Suit {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 enum Rank {
     Two,
     Three,
@@ -48,7 +50,7 @@ impl fmt::Display for Rank {
             Rank::Seven => write!(f, "7"),
             Rank::Eight => write!(f, "8"),
             Rank::Nine  => write!(f, "9"),
-            Rank::Ten   => write!(f, "10"),
+            Rank::Ten   => write!(f, "T"),
             Rank::Jack  => write!(f, "J"),
             Rank::Queen => write!(f, "Q"),
             Rank::King  => write!(f, "K"),
@@ -64,10 +66,6 @@ struct Card {
 }
 
 impl Card {
-    fn new( r : Rank, s : Suit ) -> Self {
-        Self { rank : r, suit : s }
-    }
-
     fn to_string(&self) -> String {
         format!("{} of {}", self.rank, self.suit )
     }
@@ -87,6 +85,20 @@ impl Hand {
     fn new( c0 : Card, c1 : Card, c2 : Card) -> Self {
         let cv = vec![c0, c1, c2];
         Hand { cards : cv }
+    }
+
+    fn get_upcard_rank(&self) -> Rank {
+        self.cards[0].rank
+    }
+}
+
+impl fmt::Display for Hand {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut output = String::new();
+        for c in &self.cards {
+            write!(&mut output, "{}", c.rank);
+        }
+        write!(f, "{}", output)
     }
 }
 
@@ -164,6 +176,25 @@ fn main() {
         println!("Card is {}", card);
     }
 
-    let hands = vec![Hand::new(deck[0],deck[1],deck[2])];
+    //let hands = vec![Hand::new(deck[0],deck[1],deck[2])];
 
+    let mut hands = Vec::new();
+
+    let mut card_num = 0;
+
+    // Seven players
+    for _ in 0..7 {
+        hands.push(Hand::new(deck[card_num], deck[card_num+1], deck[card_num+2]));
+        card_num += 3;
+    }
+
+    println!("Showing:\n");
+
+    let mut force_card  = Two;
+    for (i, h) in hands.iter().enumerate() {
+        println!("Player {} has {}", i+1, h.get_upcard_rank());
+        force_card = cmp::max(force_card, h.get_upcard_rank());
+    }
+
+    println!("Force card is {}", force_card );
 }
