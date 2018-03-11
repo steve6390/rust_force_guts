@@ -1,7 +1,5 @@
 use std::fmt;
-use std::fmt::Write;
 use std::cmp::Ordering;
-use std::cmp;
 
 #[derive(Clone, Copy, Debug)]
 pub enum Suit {

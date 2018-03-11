@@ -1,0 +1,7 @@
+[package]
+name = "force_guts"
+version = "0.1.0"
+authors = ["srking"]
+
+[dependencies]
+rand = "0.4"
