@@ -79,36 +79,49 @@ fn main() {
 
     //let hands = vec![Hand::new(deck[0],deck[1],deck[2])];
 
-    let mut hands = Vec::new();
+    let mut handnum = 0;
+    let mut count_3ofkind = 0;
+    loop {
+        handnum += 1;
+        rng.shuffle(&mut deck);
+        //println!("Hand number {}", handnum);
+        let mut hands = Vec::new();
 
-    let mut card_num = 0;
+        let mut card_num = 0;
 
-    // Seven players
-    for _ in 0..7 {
-        hands.push(Hand::new(deck[card_num], deck[card_num+1], deck[card_num+2]));
-        card_num += 3;
-    }
-
-    println!("Showing:\n");
-
-    let mut force_card  = Rank::Two;
-    for (i, h) in hands.iter().enumerate() {
-        println!("Player {} shows {}", i, h.get_upcard_rank());
-        force_card = cmp::max(force_card, h.get_upcard_rank());
-    }
-
-    println!("Force card is {}", force_card );
-
-    let mut forced_players = Vec::new();
-
-    for (i, h) in hands.iter().enumerate() {
-        if h.get_upcard_rank() == force_card {
-            forced_players.push(i);
+        // Seven players
+        for _ in 0..7 {
+            hands.push(Hand::new(deck[card_num], deck[card_num+1], deck[card_num+2]));
+            card_num += 3;
         }
-    }
 
-    println!("Forced players are: ");
-    for i in forced_players {
-        println!("{}", i);
+        //println!("Showing:\n");
+
+        let mut force_card  = Rank::Two;
+        for (i, h) in hands.iter().enumerate() {
+            //println!("Player {} shows {}", i, h.get_upcard_rank());
+            force_card = cmp::max(force_card, h.get_upcard_rank());
+        }
+
+        //println!("Force card is {}", force_card );
+
+        let mut forced_players = Vec::new();
+
+        for (i, h) in hands.iter().enumerate() {
+            if h.get_upcard_rank() == force_card {
+                forced_players.push(i);
+            }
+            if h.is_3ofkind() {
+                count_3ofkind += 1;
+                println!("Hand number {}: Player {} has 3 of a kind! {}. [{}]",
+                        handnum, i, h, count_3ofkind);
+            }
+        }
+/*
+        println!("Forced players are: ");
+        for i in forced_players {
+            println!("{}", i);
+        }
+*/
     }
 }

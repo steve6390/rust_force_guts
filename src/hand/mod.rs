@@ -24,6 +24,11 @@ impl Hand {
         self.upcard.rank
     }
 
+    pub fn is_2ofkind(&self) -> bool {
+        (self.cards[0].rank == self.cards[1].rank) ||
+        (self.cards[1].rank == self.cards[2].rank)
+    }
+
     pub fn is_3ofkind(&self) -> bool {
         (self.cards[0].rank == self.cards[1].rank) &&
         (self.cards[0].rank == self.cards[2].rank)
