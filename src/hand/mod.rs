@@ -6,8 +6,6 @@ pub use self::card::Card;
 pub use self::card::Suit;
 pub use self::card::Rank;
 
-
-
 pub struct Hand {
     cards : Vec<Card>,
     upcard : Card,
@@ -32,6 +30,16 @@ impl Hand {
     pub fn is_3ofkind(&self) -> bool {
         (self.cards[0].rank == self.cards[1].rank) &&
         (self.cards[0].rank == self.cards[2].rank)
+    }
+
+    pub fn get_hand_rank(&self) -> usize {
+        if self.is_3ofkind() {
+            return 2;
+        }
+        if self.is_2ofkind() {
+            return 1;
+        }
+        return 0;
     }
 }
 

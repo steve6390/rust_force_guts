@@ -79,25 +79,26 @@ fn main() {
 
     //let hands = vec![Hand::new(deck[0],deck[1],deck[2])];
 
-    let mut handnum = 0;
+    let mut hands_played = 0;
     let mut count_3ofkind = 0;
-    loop {
-        handnum += 1;
+    let mut hand_stats : [u64; 3] = [0; 3];
+    while hands_played < 1_000_000 {
         rng.shuffle(&mut deck);
-        //println!("Hand number {}", handnum);
+        //println!("Hand number {}", hands_played);
         let mut hands = Vec::new();
 
         let mut card_num = 0;
 
         // Seven players
         for _ in 0..7 {
+            hands_played += 1;
             hands.push(Hand::new(deck[card_num], deck[card_num+1], deck[card_num+2]));
             card_num += 3;
         }
 
         //println!("Showing:\n");
 
-        let mut force_card  = Rank::Two;
+        let mut force_card = Rank::Two;
         for (i, h) in hands.iter().enumerate() {
             //println!("Player {} shows {}", i, h.get_upcard_rank());
             force_card = cmp::max(force_card, h.get_upcard_rank());
@@ -111,11 +112,14 @@ fn main() {
             if h.get_upcard_rank() == force_card {
                 forced_players.push(i);
             }
+            let hr = h.get_hand_rank();
+            hand_stats[hr] += 1;
+            /*
             if h.is_3ofkind() {
                 count_3ofkind += 1;
                 println!("Hand number {}: Player {} has 3 of a kind! {}. [{}]",
-                        handnum, i, h, count_3ofkind);
-            }
+                        hands_played, i, h, count_3ofkind);
+            */
         }
 /*
         println!("Forced players are: ");
@@ -123,5 +127,10 @@ fn main() {
             println!("{}", i);
         }
 */
+    }
+
+    for (i, v) in hand_stats.iter().enumerate() {
+        let r = *v as f64 / hands_played as f64;
+        println!("Odds of {} is {}", i, r);
     }
 }
