@@ -4,4 +4,6 @@ version = "0.1.0"
 authors = ["srking"]
 
 [dependencies]
-rand = "0.4"
+rand = "*"
+time = "*"
+

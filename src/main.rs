@@ -1,5 +1,6 @@
 use std::cmp;
 extern crate rand;
+extern crate time;
 mod hand;
 use hand::Hand;
 use hand::card::Card;
@@ -7,6 +8,7 @@ use hand::card::Suit;
 use hand::card::Rank;
 
 use rand::{thread_rng, Rng};
+use time::PreciseTime;
 
 fn main() {
     let mut deck = [
@@ -80,12 +82,14 @@ fn main() {
     //let hands = vec![Hand::new(deck[0],deck[1],deck[2])];
 
     let mut hands_played = 0;
-    let mut count_3ofkind = 0;
     let mut hand_stats : [u64; 3] = [0; 3];
+    let mut hands = Vec::new();
+
+    let start = PreciseTime::now();
     while hands_played < 1_000_000 {
         rng.shuffle(&mut deck);
         //println!("Hand number {}", hands_played);
-        let mut hands = Vec::new();
+        hands.clear();
 
         let mut card_num = 0;
 
@@ -128,7 +132,9 @@ fn main() {
         }
 */
     }
+    let stop = PreciseTime::now();
 
+    println!("Executed in {}", start.to(stop));
     for (i, v) in hand_stats.iter().enumerate() {
         let r = *v as f64 / hands_played as f64;
         println!("Odds of {} is {}", i, r);
