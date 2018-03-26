@@ -9,6 +9,8 @@ pub use self::card::Rank;
 pub struct Hand {
     cards : Vec<Card>,
     upcard : Card,
+    is_forced : bool,
+    is_folded : bool,
 }
 
 impl Hand {
@@ -16,11 +18,32 @@ impl Hand {
         let mut cv = vec![c0, c1, c2];
         // hands are always sorted, c0 = lowest card, c2 = highest card
         cv.sort_unstable();
-        Hand { cards : cv, upcard : c0 }
+        Hand {
+            cards : cv,
+            upcard : c0,
+            is_forced : false,
+            is_folded : false,
+        }
+    }
+
+    pub fn set_forced(&mut self) {
+        self.is_forced = true;
+    }
+
+    pub fn is_forced(&self) -> bool {
+        self.is_forced
+    }
+
+    pub fn set_folded(&mut self) {
+        self.is_folded = true;
+    }
+
+    pub fn is_folded(&self) -> bool {
+        self.is_folded
     }
 
     pub fn get_upcard_rank(&self) -> u32 {
-        return self.upcard.rank as u32;
+        return (self.upcard.rank as u32) << 8;
     }
 
     pub fn is_2ofkind(&self) -> bool {

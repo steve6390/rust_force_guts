@@ -11,6 +11,24 @@ use rand::{thread_rng, Rng};
 use time::PreciseTime;
 use std::collections::BTreeMap;
 
+struct HandStats {
+    count : u64,
+    forces : u64,
+    folds : u64,
+    wins : u64,
+}
+
+impl HandStats {
+    pub fn new() -> Self {
+        HandStats {
+            count : 0,
+            forces : 0,
+            folds : 0,
+            wins : 0,
+        }
+    }
+}
+
 fn main() {
     let mut deck = [
         Card { rank : Rank::Two  , suit : Suit::Heart },
@@ -68,19 +86,9 @@ fn main() {
     ];
 
     println!("Force Guts 0.1");
-    for card in deck.iter() {
-        println!("Card is {}", card.to_string());
-    }
 
     let mut rng = thread_rng();
-    println!("After shuffling:");
     rng.shuffle(&mut deck);
-
-    for card in deck.iter() {
-        println!("Card is {}", card);
-    }
-
-    //let hands = vec![Hand::new(deck[0],deck[1],deck[2])];
 
     let mut hands_played = 0;
     let mut hand_stats = BTreeMap::new();
@@ -89,39 +97,52 @@ fn main() {
     let start = PreciseTime::now();
     while hands_played < 1_000_000 {
         rng.shuffle(&mut deck);
-        //println!("Hand number {}", hands_played);
-        hands.clear();
 
-        let mut card_num = 0;
-
-        // Seven players
-        for _ in 0..7 {
-            hands_played += 1;
-            hands.push(Hand::new(deck[card_num], deck[card_num+1], deck[card_num+2]));
-            card_num += 3;
-        }
-
-        let mut force_card = 0;
-        for (i, h) in hands.iter().enumerate() {
-            force_card = cmp::max(force_card, h.get_upcard_rank());
-        }
-
-        let mut forced_players = Vec::new();
-
-        for (i, h) in hands.iter().enumerate() {
-            if h.get_upcard_rank() == force_card {
-                forced_players.push(i);
+        {
+            // card_num tracks the opint from which we're dealing the deck.
+            let mut card_num = 0;
+            hands.clear();
+            // Seven players
+            for _ in 0..7 {
+                hands_played += 1;
+                hands.push(Hand::new(deck[card_num], deck[card_num+1], deck[card_num+2]));
+                card_num += 3;
             }
+        }
+
+        // Determine the rank of the forced card
+        let mut force_rank = 0;
+        for h in hands.iter() {
+            force_rank = cmp::max(force_rank, h.get_upcard_rank());
+        }
+
+        for h in hands.iter_mut() {
             let hr = h.get_hand_rank();
-            let count = hand_stats.entry(hr).or_insert(0);
-            *count += 1;
+            let stats = hand_stats.entry(hr).or_insert(HandStats::new());
+            stats.count += 1;
+
+            // check if forced
+            // if not forced, then we have the option to fold
+            if h.get_upcard_rank() == force_rank {
+                h.set_forced();
+                stats.forces += 1;
+            } else if hr <= force_rank {
+                h.set_folded();
+                stats.folds += 1;
+            }
+
+            // check if folding
+
+
         }
     }
+
     let stop = PreciseTime::now();
 
-    for (hr, count) in &hand_stats {
-        let r = *count as f64 / hands_played as f64;
-        println!("0x{:X} happend {} times.  Odds {:.4}%", hr, *count, r * 100.0);
+    for (hr, stats) in &hand_stats {
+        let r = stats.count as f64 / hands_played as f64;
+        println!("0x{:X} dealt {} times, forced {} times, folded {} times.  Odds {:.4}%",
+                hr, stats.count, stats.forces, stats.folds, r * 100.0);
     }
     println!("Executed in {}", start.to(stop));
 }
