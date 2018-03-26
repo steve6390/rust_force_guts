@@ -61,7 +61,7 @@ impl Hand {
      Rank of 2-of-kind is pair << 12 + kicker
      Ranks of high card is (Highest << 8) + (middle << 4) + lowest
     */
-    pub fn get_hand_rank(&self) -> u32 {
+    pub fn get_rank(&self) -> u32 {
         if self.is_3ofkind() {
             return (self.cards[0].rank as u32) << 16;
         }

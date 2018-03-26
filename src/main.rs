@@ -110,19 +110,18 @@ fn main() {
             }
         }
 
-        // Determine the rank of the forced card
-        let mut force_rank = 0;
-        for h in hands.iter() {
-            force_rank = cmp::max(force_rank, h.get_upcard_rank());
-        }
+        // Determine the rank of the forced card.
+        let force_rank = hands.iter().fold(0, |force_rank, h|
+                cmp::max(force_rank, h.get_upcard_rank()));
 
         for h in hands.iter_mut() {
-            let hr = h.get_hand_rank();
+            let hr = h.get_rank();
             let stats = hand_stats.entry(hr).or_insert(HandStats::new());
             stats.count += 1;
 
             // check if forced
-            // if not forced, then we have the option to fold
+            // if not forced, then we have the option to fold.
+            // If the hand is worse than the force card, fold is automatic.
             if h.get_upcard_rank() == force_rank {
                 h.set_forced();
                 stats.forces += 1;
@@ -130,10 +129,20 @@ fn main() {
                 h.set_folded();
                 stats.folds += 1;
             }
+        }
 
-            // check if folding
+        // All folding algorithms are complete by this point
+        // Determine the winning hand rank.
+        let win_rank = hands.iter()
+                .filter(|h| !h.is_folded())
+                .fold(0, |win_rank, h| cmp::max(win_rank, h.get_rank()));
 
-
+        for h in hands.iter_mut() {
+            if h.get_rank() == win_rank {
+                if let Some(stats) = hand_stats.get_mut(&win_rank) {
+                    stats.wins += 1;
+                }
+            }
         }
     }
 
@@ -141,8 +150,8 @@ fn main() {
 
     for (hr, stats) in &hand_stats {
         let r = stats.count as f64 / hands_played as f64;
-        println!("0x{:X} dealt {} times, forced {} times, folded {} times.  Odds {:.4}%",
-                hr, stats.count, stats.forces, stats.folds, r * 100.0);
+        println!("0x{:X} dealt {} times, won {} times, forced {} times, folded {} times.  Odds {:.4}%",
+                hr, stats.count, stats.wins, stats.forces, stats.folds, r * 100.0);
     }
     println!("Executed in {}", start.to(stop));
 }
