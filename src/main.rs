@@ -138,7 +138,7 @@ fn main() {
 
     for (hr, count) in &hand_stats {
         let r = *count as f64 / hands_played as f64;
-        println!("Odds of 0x{:X} is {}", hr, r);
+        println!("0x{:X} happend {} times.  Odds {:.4}%", hr, *count, r * 100.0);
     }
     println!("Executed in {}", start.to(stop));
 }
