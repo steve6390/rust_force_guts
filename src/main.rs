@@ -101,15 +101,10 @@ fn main() {
             card_num += 3;
         }
 
-        //println!("Showing:\n");
-
-        let mut force_card = Rank::Two;
+        let mut force_card = 0;
         for (i, h) in hands.iter().enumerate() {
-            //println!("Player {} shows {}", i, h.get_upcard_rank());
             force_card = cmp::max(force_card, h.get_upcard_rank());
         }
-
-        //println!("Force card is {}", force_card );
 
         let mut forced_players = Vec::new();
 
@@ -120,19 +115,7 @@ fn main() {
             let hr = h.get_hand_rank();
             let count = hand_stats.entry(hr).or_insert(0);
             *count += 1;
-            /*
-            if h.is_3ofkind() {
-                count_3ofkind += 1;
-                println!("Hand number {}: Player {} has 3 of a kind! {}. [{}]",
-                        hands_played, i, h, count_3ofkind);
-            */
         }
-/*
-        println!("Forced players are: ");
-        for i in forced_players {
-            println!("{}", i);
-        }
-*/
     }
     let stop = PreciseTime::now();
 

@@ -19,8 +19,8 @@ impl Hand {
         Hand { cards : cv, upcard : c0 }
     }
 
-    pub fn get_upcard_rank(&self) -> Rank {
-        self.upcard.rank
+    pub fn get_upcard_rank(&self) -> u32 {
+        return self.upcard.rank as u32;
     }
 
     pub fn is_2ofkind(&self) -> bool {
