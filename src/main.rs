@@ -149,8 +149,8 @@ fn main() {
     let stop = PreciseTime::now();
 
     for (hr, stats) in &hand_stats {
-        let r = stats.count as f64 / hands_played as f64;
-        println!("0x{:X} dealt {} times, won {} times, forced {} times, folded {} times.  Odds {:.4}%",
+        let r = stats.wins as f64 / (stats.count - stats.folds) as f64;
+        println!("0x{:X} dealt {} times, won {} times, forced {} times, folded {} times.  Winning odds {:.4}%",
                 hr, stats.count, stats.wins, stats.forces, stats.folds, r * 100.0);
     }
     println!("Executed in {}", start.to(stop));
