@@ -14,6 +14,7 @@ pub struct Hand {
 impl Hand {
     pub fn new( c0 : Card, c1 : Card, c2 : Card) -> Self {
         let mut cv = vec![c0, c1, c2];
+        // hands are always sorted, c0 = lowest card, c2 = highest card
         cv.sort_unstable();
         Hand { cards : cv, upcard : c0 }
     }
@@ -32,14 +33,30 @@ impl Hand {
         (self.cards[0].rank == self.cards[2].rank)
     }
 
-    pub fn get_hand_rank(&self) -> usize {
+    /*
+     Rank of 3-of-kind is triple << 16
+     Rank of 2-of-kind is pair << 12 + kicker
+     Ranks of high card is (Highest << 8) + (middle << 4) + lowest
+    */
+    pub fn get_hand_rank(&self) -> u32 {
         if self.is_3ofkind() {
-            return 2;
+            return (self.cards[0].rank as u32) << 16;
         }
         if self.is_2ofkind() {
-            return 1;
+            // hands are sorted by rank, so either c0==c1 or c1==c2
+            if self.cards[0].rank == self.cards[1].rank {
+                return ((self.cards[0].rank as u32) << 12)
+                       + self.cards[2].rank as u32; // c2 is kicker
+            } else {
+                return ((self.cards[1].rank as u32) << 12)
+                       + self.cards[0].rank as u32; // c0 is kicker
+            }
         }
-        return 0;
+
+        // hands are sorted, c2 is always highest card
+        return ((self.cards[2].rank as u32) << 8)
+             + ((self.cards[1].rank as u32) << 4)
+             +   self.cards[0].rank as u32;
     }
 }
 

@@ -9,6 +9,7 @@ use hand::card::Rank;
 
 use rand::{thread_rng, Rng};
 use time::PreciseTime;
+use std::collections::BTreeMap;
 
 fn main() {
     let mut deck = [
@@ -82,7 +83,7 @@ fn main() {
     //let hands = vec![Hand::new(deck[0],deck[1],deck[2])];
 
     let mut hands_played = 0;
-    let mut hand_stats : [u64; 3] = [0; 3];
+    let mut hand_stats = BTreeMap::new();
     let mut hands = Vec::new();
 
     let start = PreciseTime::now();
@@ -117,7 +118,8 @@ fn main() {
                 forced_players.push(i);
             }
             let hr = h.get_hand_rank();
-            hand_stats[hr] += 1;
+            let count = hand_stats.entry(hr).or_insert(0);
+            *count += 1;
             /*
             if h.is_3ofkind() {
                 count_3ofkind += 1;
@@ -134,9 +136,9 @@ fn main() {
     }
     let stop = PreciseTime::now();
 
-    println!("Executed in {}", start.to(stop));
-    for (i, v) in hand_stats.iter().enumerate() {
-        let r = *v as f64 / hands_played as f64;
-        println!("Odds of {} is {}", i, r);
+    for (hr, count) in &hand_stats {
+        let r = *count as f64 / hands_played as f64;
+        println!("Odds of 0x{:X} is {}", hr, r);
     }
+    println!("Executed in {}", start.to(stop));
 }

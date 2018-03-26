@@ -22,7 +22,7 @@ impl fmt::Display for Suit {
 
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 pub enum Rank {
-    Two,
+    Two = 2,
     Three,
     Four,
     Five,
