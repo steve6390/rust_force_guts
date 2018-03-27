@@ -42,6 +42,8 @@ impl Hand {
         self.is_folded
     }
 
+    // The rank of an individual card is calculated as if
+    // it's the high card, so upshift 8.
     pub fn get_upcard_rank(&self) -> u32 {
         return (self.upcard.rank as u32) << 8;
     }
