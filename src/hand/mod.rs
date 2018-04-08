@@ -7,7 +7,7 @@ pub use self::card::Suit;
 pub use self::card::Rank;
 
 pub struct Hand {
-    cards : Vec<Card>,
+    pub cards : Vec<Card>,
     upcard : Card,
     is_forced : bool,
     is_folded : bool,

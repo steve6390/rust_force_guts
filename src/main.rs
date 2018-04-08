@@ -16,16 +16,26 @@ struct HandStats {
     forces : u64,
     folds : u64,
     wins : u64,
+    cards : Vec<Card>,
 }
 
 impl HandStats {
-    pub fn new() -> Self {
+    pub fn new( ref h : &Hand) -> Self {
         HandStats {
             count : 0,
             forces : 0,
             folds : 0,
             wins : 0,
+            cards : h.cards.to_owned(),
         }
+    }
+
+    pub fn cards_to_string(&self) -> String {
+        let mut result = String::from("");
+        for c in &self.cards {
+            result.push_str(&c.rank.to_string());
+        }
+        return result;
     }
 }
 
@@ -116,7 +126,7 @@ fn main() {
 
         for h in hands.iter_mut() {
             let hr = h.get_rank();
-            let stats = hand_stats.entry(hr).or_insert(HandStats::new());
+            let stats = hand_stats.entry(hr).or_insert(HandStats::new(h));
             stats.count += 1;
 
             // check if forced
@@ -150,8 +160,8 @@ fn main() {
 
     for (hr, stats) in &hand_stats {
         let r = stats.wins as f64 / (stats.count - stats.folds) as f64;
-        println!("0x{:X} dealt {} times, won {} times, forced {} times, folded {} times.  Winning odds {:.4}%",
-                hr, stats.count, stats.wins, stats.forces, stats.folds, r * 100.0);
+        println!("{}, 0x{:5X} dealt {:5}, won {:5}, forced {:5}, folded {:5}.  Winning odds {:.4}%",
+                stats.cards_to_string(), hr, stats.count, stats.wins, stats.forces, stats.folds, r * 100.0);
     }
     println!("Executed in {}", start.to(stop));
 }
