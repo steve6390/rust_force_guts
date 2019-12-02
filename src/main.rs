@@ -21,7 +21,7 @@ struct HandStats {
 }
 
 impl HandStats {
-    pub fn new( ref h : &Hand) -> Self {
+    pub fn new( h : &Hand) -> Self {
         HandStats {
             count : 0,
             forces : 0,
@@ -36,7 +36,7 @@ impl HandStats {
         for c in &self.cards {
             result.push_str(&c.rank.to_string());
         }
-        return result;
+        result
     }
 }
 
@@ -127,7 +127,7 @@ fn main() {
 
         for h in hands.iter_mut() {
             let hr = h.get_rank();
-            let stats = hand_stats.entry(hr).or_insert(HandStats::new(h));
+            let stats = hand_stats.entry(hr).or_insert_with(|| HandStats::new(h));
             stats.count += 1;
 
             // check if forced
