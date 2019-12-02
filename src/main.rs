@@ -7,7 +7,8 @@ use hand::card::Card;
 use hand::card::Suit;
 use hand::card::Rank;
 
-use rand::{thread_rng, Rng};
+use rand::thread_rng;
+use rand::seq::SliceRandom;
 use time::PreciseTime;
 use std::collections::BTreeMap;
 
@@ -95,10 +96,10 @@ fn main() {
         Card { rank : Rank::Ace  , suit : Suit::Spade },
     ];
 
-    println!("Force Guts 0.1");
+    println!("Force Guts 0.2");
 
     let mut rng = thread_rng();
-    rng.shuffle(&mut deck);
+    deck.shuffle(&mut rng);
 
     let mut hands_played = 0;
     let mut hand_stats = BTreeMap::new();
@@ -106,10 +107,10 @@ fn main() {
 
     let start = PreciseTime::now();
     while hands_played < 1_000_000 {
-        rng.shuffle(&mut deck);
+        deck.shuffle(&mut rng);
 
         {
-            // card_num tracks the opint from which we're dealing the deck.
+            // card_num tracks the point from which we're dealing the deck.
             let mut card_num = 0;
             hands.clear();
             // Seven players
