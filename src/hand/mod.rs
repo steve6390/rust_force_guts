@@ -30,10 +30,6 @@ impl Hand {
         self.is_forced = true;
     }
 
-    pub fn is_forced(&self) -> bool {
-        self.is_forced
-    }
-
     pub fn set_folded(&mut self) {
         self.is_folded = true;
     }
@@ -45,7 +41,7 @@ impl Hand {
     // The rank of an individual card is calculated as if
     // it's the high card, so upshift 8.
     pub fn get_upcard_rank(&self) -> u32 {
-        return (self.upcard.rank as u32) << 8;
+        (self.upcard.rank as u32) << 8
     }
 
     pub fn is_2ofkind(&self) -> bool {
@@ -79,9 +75,9 @@ impl Hand {
         }
 
         // hands are sorted, c2 is always highest card
-        return ((self.cards[2].rank as u32) << 8)
+        ((self.cards[2].rank as u32) << 8)
              + ((self.cards[1].rank as u32) << 4)
-             +   self.cards[0].rank as u32;
+             +   self.cards[0].rank as u32
     }
 }
 
@@ -97,7 +93,7 @@ impl fmt::Display for Hand {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut output = String::new();
         for c in &self.cards {
-            write!(&mut output, "{}", c.rank);
+            write!(&mut output, "{}", c.rank)?;
         }
         write!(f, "{}", output)
     }

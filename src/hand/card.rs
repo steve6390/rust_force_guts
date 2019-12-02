@@ -63,15 +63,17 @@ pub struct Card {
     pub rank : Rank
 }
 
+/*
 impl Card {
     fn to_string(&self) -> String {
         format!("{} of {}", self.rank, self.suit )
     }
 }
+*/
 
 impl fmt::Display for Card {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.rank)
+        write!(f, "{} of {}", self.rank, self.suit)
     }
 }
 
