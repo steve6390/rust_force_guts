@@ -9,7 +9,7 @@ use hand::card::Rank;
 
 use rand::thread_rng;
 use rand::seq::SliceRandom;
-use time::PreciseTime;
+use time::Instant;
 use std::collections::BTreeMap;
 
 struct HandStats {
@@ -96,7 +96,11 @@ fn main() {
         Card { rank : Rank::Ace  , suit : Suit::Spade },
     ];
 
-    println!("Force Guts 0.2");
+    println!("Force Guts 0.3");
+
+    let game_count = 2_000_000;
+
+    println!("Playing {} games.  Should be done is less than 20 seconds.", game_count);
 
     let mut rng = thread_rng();
     deck.shuffle(&mut rng);
@@ -105,8 +109,8 @@ fn main() {
     let mut hand_stats = BTreeMap::new();
     let mut hands = Vec::new();
 
-    let start = PreciseTime::now();
-    while hands_played < 1_000_000 {
+    let start = Instant::now();
+    while hands_played < game_count {
         deck.shuffle(&mut rng);
 
         {
@@ -157,12 +161,14 @@ fn main() {
         }
     }
 
-    let stop = PreciseTime::now();
+    let stop = Instant::now();
 
     for (hr, stats) in &hand_stats {
         let r = stats.wins as f64 / (stats.count - stats.folds) as f64;
-        println!("{}, 0x{:5X} dealt {:5}, won {:5}, forced {:5}, folded {:5}.  Winning odds {:.4}%",
+        println!("{}, 0x{:5X} dealt {:5}, won {:5}, forced {:5}, folded {:5}.  Winning odds {:.2}%",
                 stats.cards_to_string(), hr, stats.count, stats.wins, stats.forces, stats.folds, r * 100.0);
     }
-    println!("Executed in {}", start.to(stop));
+
+    let elapsed = stop - start;
+    println!("Executed in {:.2} seconds", elapsed.as_seconds_f32());
 }
