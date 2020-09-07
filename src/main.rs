@@ -163,10 +163,10 @@ fn main() {
 
     let stop = Instant::now();
 
-    for (hr, stats) in &hand_stats {
+    for (_hr, stats) in &hand_stats {
         let r = stats.wins as f64 / (stats.count - stats.folds) as f64;
-        println!("{}, 0x{:5X} dealt {:5}, won {:5}, forced {:5}, folded {:5}.  Winning odds {:.2}%",
-                stats.cards_to_string(), hr, stats.count, stats.wins, stats.forces, stats.folds, r * 100.0);
+        println!("{}, dealt {:5}, won {:5}, forced {:5}, folded {:5}.  Winning odds {:.2}%",
+                stats.cards_to_string(), stats.count, stats.wins, stats.forces, stats.folds, r * 100.0);
     }
 
     let elapsed = stop - start;
